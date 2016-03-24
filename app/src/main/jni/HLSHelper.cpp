@@ -19,7 +19,7 @@ static float *floatBuffer;
 static void playerEventCallback(void *clientData, SuperpoweredAdvancedAudioPlayerEvent event, void *value) {
     switch (event) {
         case SuperpoweredAdvancedAudioPlayerEvent_LoadSuccess: player->play(false); break;
-        case SuperpoweredAdvancedAudioPlayerEvent_LoadError: __android_log_print(ANDROID_LOG_DEBUG, "HLSExample", "Open error: %s", (char *)value); break;
+        case SuperpoweredAdvancedAudioPlayerEvent_LoadError: __android_log_print(ANDROID_LOG_DEBUG, "HLSHelper", "Open error: %s", (char *)value); break;
         case SuperpoweredAdvancedAudioPlayerEvent_EOF: player->seek(0); break;
         default:;
     };
@@ -41,9 +41,8 @@ JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_onForeground(JN
 JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_onBackground(JNIEnv *javaEnvironment, jobject self);
 JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_Open(JNIEnv *javaEnvironment, jobject self, jstring url);
 JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_Seek(JNIEnv *javaEnvironment, jobject self, jfloat percent);
-JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_SetDownloadStrategy(JNIEnv *javaEnvironment, jobject self, jlong optionIndex);
-JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_PlayPause(JNIEnv *javaEnvironment, jobject self);
-JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_SetSpeed(JNIEnv *javaEnvironment, jobject self, jlong fast);
+JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_Play(JNIEnv *javaEnvironment, jobject self);
+JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_Pause(JNIEnv *javaEnvironment, jobject self);
 JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_UpdateStatus(JNIEnv *javaEnvironment, jobject self);
 JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_Cleanup(JNIEnv *javaEnvironment, jobject self);
 }
@@ -79,21 +78,12 @@ JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_Seek(JNIEnv *ja
     player->seek(percent);
 }
 
-JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_SetDownloadStrategy(JNIEnv *javaEnvironment, jobject self, jlong optionIndex) {
-    switch (optionIndex) {
-        case 1: player->downloadSecondsAhead = 20; break; // Will not buffer more than 20 seconds ahead of the playback position.
-        case 2: player->downloadSecondsAhead = 40; break; // Will not buffer more than 40 seconds ahead of the playback position.
-        case 3: player->downloadSecondsAhead = HLS_DOWNLOAD_EVERYTHING; break; // Will buffer everything after and before the playback position.
-        default: player->downloadSecondsAhead = HLS_DOWNLOAD_REMAINING; // Will buffer everything after the playback position.
-    };
-}
-
-JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_PlayPause(JNIEnv *javaEnvironment, jobject self) {
+JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_Play(JNIEnv *javaEnvironment, jobject self) {
     player->togglePlayback();
 }
 
-JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_SetSpeed(JNIEnv *javaEnvironment, jobject self, jlong fast) {
-    player->setTempo(fast ? 2.0f : 1.0f, true);
+JNIEXPORT void Java_com_mullis_clay_simplehlsstream_MainActivity_Pause(JNIEnv *javaEnvironment, jobject self) {
+    player->pause();
 }
 
 // Helper functions to update some Java object instance's member variables
