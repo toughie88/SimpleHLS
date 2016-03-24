@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Simple HLS Stream</string>
     <string name="action_settings">Settings</string>
+    <string name="please">Please play or pause the stream</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
 </resources>
